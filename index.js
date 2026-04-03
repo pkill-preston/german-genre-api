@@ -4,7 +4,6 @@ import cors from "cors";
 import 'dotenv/config';
 
 const { Pool } = pkg;
-
 const app = express();
 app.use(cors());
 
@@ -21,29 +20,50 @@ const pool = new Pool({
     : false
 });
 
-app.get("/nouns", async (req, res) => {
-  const result = await pool.query(
-    "SELECT * FROM nouns LIMIT 50"
-  );
-  res.json(result.rows);
+app.get("/words", async (req, res) => {
+  try {
+    let amount = parseInt(req.query.amount) || 10;
+    if (amount > 50) amount = 50;
+
+    const result = await pool.query(
+      "SELECT * FROM german_words ORDER BY RANDOM() LIMIT $1",
+      [amount]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Database query failed" });
+  }
 });
 
 app.get("/search", async (req, res) => {
-  const q = req.query.q || "";
+  try {
+    const q = req.query.q || "";
 
-  const result = await pool.query(
-    "SELECT * FROM nouns WHERE noun ILIKE $1 LIMIT 20",
-    [q + "%"]
-  );
+    const result = await pool.query(
+      "SELECT * FROM german_words WHERE lemma ILIKE $1 LIMIT 20",
+      [q + "%"]
+    );
 
-  res.json(result.rows);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Database query failed" });
+  }
 });
 
 app.get("/random", async (req, res) => {
-  const result = await pool.query(
-    "SELECT * FROM nouns ORDER BY RANDOM() LIMIT 1"
-  );
-  res.json(result.rows[0]);
+  try {
+    const result = await pool.query(
+      "SELECT * FROM german_words ORDER BY RANDOM() LIMIT 1"
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Database query failed" });
+  }
 });
 
-app.listen(3000, () => console.log("API running"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`API running on port ${PORT}`));
