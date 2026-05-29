@@ -26,5 +26,8 @@
   },
   "compilerOptions": {
     "outDir": "./dist"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.20.0"
   }
 }

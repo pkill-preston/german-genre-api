@@ -2,10 +2,10 @@ import express from "express";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 
-import wordsRoute from "./routes/words.ts";
-import searchRoute from "./routes/search.ts";
-import randomRoute from "./routes/random.ts";
-import dailyWordRoute from "./routes/dailyWord.ts";
+import wordsRoute from "./routes/words.js";
+import searchRoute from "./routes/search.js";
+import randomRoute from "./routes/random.js";
+import dailyWordRoute from "./routes/dailyWord.js";
 
 const app = express();
 
